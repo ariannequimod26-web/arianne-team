@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div>
             <h2 class="text-2xl font-bold text-gray-900">
-                Welcome back, {{ Auth::user()->name }}! 👋
+               Good Day , {{ Auth::user()->name }}! 👋
             </h2>
             <p class="text-sm text-gray-500 mt-1">Here's what's happening with your account today.</p>
         </div>
