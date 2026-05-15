@@ -37,6 +37,9 @@
                         <x-nav-link :href="route('queue.index')" :active="request()->routeIs('queue.index')">
                             {{ __('Live Queue') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('menu.index')" :active="request()->routeIs('menu.index')">
+                            <span class="text-xs opacity-50 mr-1 italic">View</span> {{ __('Public Menu') }}
+                        </x-nav-link>
                     @endif
 
                     {{-- ADMIN / MANAGER LINKS --}}
@@ -49,6 +52,9 @@
                         </x-nav-link>
                         <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
                             {{ __('Manage Orders') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('menu.index')" :active="request()->routeIs('menu.index')">
+                            <span class="text-xs opacity-50 mr-1 italic">View</span> {{ __('Public Menu') }}
                         </x-nav-link>
                     @endif
                 </div>
@@ -124,6 +130,9 @@
             @if(Auth::user()->isStaff() || Auth::user()->isAdmin())
                 <x-responsive-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
                     {{ __('Orders Management') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('menu.index')" :active="request()->routeIs('menu.*')">
+                    {{ __('Public Menu') }}
                 </x-responsive-nav-link>
             @endif
 

@@ -46,9 +46,13 @@ class OrderController extends Controller
         foreach ($validated['items'] as $item) {
             $menuItem = MenuItem::findOrFail($item['menu_item_id']);
 
-            // Check availability
-            if (!$menuItem->isAvailable()) {
-                return back()->with('error', "{$menuItem->name} is not available!");
+            // Check availability with requested quantity
+            if (!$menuItem->isAvailable($item['quantity'])) {
+                $remaining = $menuItem->daily_limit - $menuItem->sold_today;
+                $message = $remaining > 0 
+                    ? "Only {$remaining} left for {$menuItem->name}!" 
+                    : "{$menuItem->name} is sold out!";
+                return back()->with('error', $message);
             }
 
             $itemTotal = $menuItem->price * $item['quantity'];

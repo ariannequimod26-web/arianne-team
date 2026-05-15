@@ -32,14 +32,14 @@ class MenuItem extends Model
     }
 
     // Check if item is available for ordering
-    public function isAvailable(): bool
+    public function isAvailable(int $quantity = 1): bool
     {
         if (!$this->available) {
             return false;
         }
 
-        if ($this->daily_limit && $this->sold_today >= $this->daily_limit) {
-            return false;
+        if ($this->daily_limit) {
+            return ($this->sold_today + $quantity) <= $this->daily_limit;
         }
 
         return true;
@@ -54,9 +54,12 @@ class MenuItem extends Model
 
         if ($this->daily_limit) {
             $remaining = $this->daily_limit - $this->sold_today;
-            return "Only {$remaining} left";
+            if ($remaining <= 0) {
+                return 'Sold Out';
+            }
+            return "{$remaining} left";
         }
 
-        return 'Available';
+        return 'In Stock';
     }
 }

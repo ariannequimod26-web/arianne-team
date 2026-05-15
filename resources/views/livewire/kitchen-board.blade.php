@@ -107,4 +107,35 @@
         </div>
 
     </div>
+
+    <!-- Stock Management Quick Controls -->
+    <div class="mt-12">
+        <div class="flex items-center gap-3 mb-6">
+            <h3 class="text-xl font-bold text-gray-800">📦 Quick Stock Management</h3>
+            <div class="h-px flex-1 bg-gray-200"></div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            @foreach($menuItems as $item)
+                <button 
+                    wire:click="toggleAvailability({{ $item->id }})"
+                    class="p-4 rounded-2xl border transition-all text-left relative overflow-hidden group {{ $item->available ? 'bg-white border-gray-100 hover:border-canteen-300 shadow-sm' : 'bg-gray-50 border-gray-200 grayscale opacity-70' }}"
+                >
+                    <div class="flex flex-col h-full justify-between">
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1">{{ $item->category }}</p>
+                            <h4 class="font-bold text-sm text-gray-800 line-clamp-1">{{ $item->name }}</h4>
+                        </div>
+                        
+                        <div class="mt-3 flex items-center justify-between">
+                            <span class="text-[10px] font-black {{ $item->isAvailable() ? 'text-green-500' : 'text-red-500' }}">
+                                {{ $item->getAvailabilityStatus() }}
+                            </span>
+                            <div class="w-2 h-2 rounded-full {{ $item->available ? 'bg-green-500 animate-pulse' : 'bg-gray-400' }}"></div>
+                        </div>
+                    </div>
+                </button>
+            @endforeach
+        </div>
+    </div>
 </div>

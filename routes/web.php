@@ -6,8 +6,17 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\QueueController;
 
-// Redirect home to menu
+// Redirect home based on role
 Route::get('/', function () {
+    if (auth()->check()) {
+        if (auth()->user()->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+        if (auth()->user()->isStaff()) {
+            return redirect()->route('admin.orders.index');
+        }
+        return redirect()->route('menu.index');
+    }
     return redirect()->route('menu.index');
 });
 
@@ -15,12 +24,18 @@ Route::get('/', function () {
 Route::get('/make-me-admin', function () {
     if (auth()->check()) {
         auth()->user()->update(['role' => 'admin']);
-        return 'You are now an admin! <a href="/admin/users">Go to Admin Panel</a>';
+        return 'You are now an admin! <a href="/admin/dashboard">Go to Admin Panel</a>';
     }
     return 'Please login first';
 })->middleware('auth');
 
 Route::get('/dashboard', function () {
+    if (auth()->user()->isAdmin()) {
+        return redirect()->route('admin.dashboard');
+    }
+    if (auth()->user()->isStaff()) {
+        return redirect()->route('admin.orders.index');
+    }
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
