@@ -29,8 +29,11 @@ class OrderController extends Controller
             'items' => 'required|array|min:1',
             'items.*.menu_item_id' => 'required|exists:menu_items,id',
             'items.*.quantity' => 'required|integer|min:1',
-            'special_notes' => 'nullable|string|max:500'
+            'special_notes' => 'nullable|string|max:500',
+            'payment_method' => 'nullable|in:cash,wallet'
         ]);
+
+        $paymentMethod = $validated['payment_method'] ?? 'cash';
 
         // Create order
         $order = new Order();
@@ -64,9 +67,26 @@ class OrderController extends Controller
             $menuItem->increment('sold_today', $item['quantity']);
         }
 
+        // Wallet Balance Check
+        if ($paymentMethod === 'wallet') {
+            if (auth()->user()->balance < $totalAmount) {
+                return back()->with('error', 'Insufficient wallet balance!');
+            }
+            auth()->user()->deduct($totalAmount, "Payment for Order #TEMP");
+            $order->is_paid = true;
+            $order->status = 'confirmed'; // Auto-confirm if paid via wallet
+        } else {
+            $order->is_paid = false;
+        }
+
         $order->total_amount = $totalAmount;
-        $order->is_paid = false;
         $order->save();
+
+        // Update transaction description with real order ID if wallet was used
+        if ($paymentMethod === 'wallet') {
+            $transaction = auth()->user()->transactions()->latest()->first();
+            $transaction->update(['description' => "Payment for Order #{$order->id}"]);
+        }
 
         // Create order items
         foreach ($orderItems as $item) {
@@ -111,6 +131,17 @@ class OrderController extends Controller
         // Revert sold count
         foreach ($order->items as $item) {
             $item->menuItem->decrement('sold_today', $item->quantity);
+        }
+
+        // Refund if paid via wallet
+        if ($order->is_paid) {
+            auth()->user()->increment('balance', $order->total_amount);
+            auth()->user()->transactions()->create([
+                'type' => 'refund',
+                'amount' => $order->total_amount,
+                'description' => "Refund for cancelled Order #{$order->id}",
+                'status' => 'completed'
+            ]);
         }
 
         $order->update(['status' => 'cancelled']);

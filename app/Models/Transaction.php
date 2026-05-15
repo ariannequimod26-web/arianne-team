@@ -10,7 +10,9 @@ class Transaction extends Model
         'user_id',
         'type',
         'amount',
-        'description'
+        'description',
+        'status',
+        'reference_number'
     ];
 
     public function user()
