@@ -25,13 +25,18 @@ class User extends Authenticatable
         return $this->hasMany(Transaction::class);
     }
 
-    public function topUp($amount, $description = 'Top up')
+    public function topUp($amount, $description = 'Top up', $status = 'completed', $reference = null)
     {
-        $this->increment('balance', $amount);
+        if ($status === 'completed') {
+            $this->increment('balance', $amount);
+        }
+        
         return $this->transactions()->create([
             'type' => 'topup',
             'amount' => $amount,
-            'description' => $description
+            'description' => $description,
+            'status' => $status,
+            'reference_number' => $reference
         ]);
     }
 
@@ -44,7 +49,8 @@ class User extends Authenticatable
         return $this->transactions()->create([
             'type' => 'payment',
             'amount' => $amount,
-            'description' => $description
+            'description' => $description,
+            'status' => 'completed'
         ]);
     }
 

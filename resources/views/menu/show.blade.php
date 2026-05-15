@@ -51,6 +51,22 @@
                                         <label for="special_notes" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">Special Notes <span class="text-gray-300 font-normal normal-case">(optional)</span></label>
                                         <textarea name="special_notes" id="special_notes" rows="2" class="w-full border-gray-200 focus:ring-canteen-400 focus:border-canteen-400 rounded-xl shadow-sm text-sm py-2" placeholder="e.g., No spicy, extra sauce..."></textarea>
                                     </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Payment Method</label>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <label class="relative flex items-center justify-center p-3 border-2 border-gray-100 rounded-xl cursor-pointer hover:bg-white has-[:checked]:border-canteen-500 has-[:checked]:bg-canteen-50/50 transition-all group">
+                                                <input type="radio" name="payment_method" value="cash" checked class="hidden peer">
+                                                <span class="text-sm font-bold text-gray-400 peer-checked:text-canteen-600">💵 Cash</span>
+                                            </label>
+                                            <label class="relative flex items-center justify-center p-3 border-2 border-gray-100 rounded-xl cursor-pointer hover:bg-white has-[:checked]:border-canteen-500 has-[:checked]:bg-canteen-50/50 transition-all group {{ auth()->user()->balance < $menuItem->price ? 'opacity-50 grayscale pointer-events-none' : '' }}">
+                                                <input type="radio" name="payment_method" value="wallet" class="hidden peer">
+                                                <div class="text-center">
+                                                    <span class="block text-sm font-bold text-gray-400 peer-checked:text-canteen-600">💳 Wallet</span>
+                                                    <span class="block text-[10px] text-gray-400">Bal: ₱{{ number_format(auth()->user()->balance, 2) }}</span>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <button type="submit" class="w-full bg-canteen-500 hover:bg-canteen-600 text-white font-bold py-3.5 px-6 rounded-xl shadow-sm transition flex justify-center items-center gap-2 text-sm">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>

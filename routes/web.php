@@ -55,6 +55,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-orders', [OrderController::class, 'myOrders'])->name('orders.my-orders');
     Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
+    // Wallet Routes
+    Route::get('/wallet', [\App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
+    Route::post('/wallet/topup', [\App\Http\Controllers\WalletController::class, 'requestTopup'])->name('wallet.topup');
+
     // Queue Routes (Public)
     Route::get('/queue', [QueueController::class, 'index'])->name('queue.index');
     Route::get('/queue/stats', [QueueController::class, 'stats'])->name('queue.stats');
@@ -75,6 +79,11 @@ Route::middleware('auth')->group(function () {
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('dashboard', [\App\Http\Controllers\AdminDashboardController::class, 'index'])->name('dashboard');
         Route::resource('menu', MenuController::class);
+        
+        // Transaction Management
+        Route::get('transactions', [\App\Http\Controllers\AdminTransactionController::class, 'index'])->name('transactions.index');
+        Route::post('transactions/{transaction}/approve', [\App\Http\Controllers\AdminTransactionController::class, 'approve'])->name('transactions.approve');
+        Route::post('transactions/{transaction}/reject', [\App\Http\Controllers\AdminTransactionController::class, 'reject'])->name('transactions.reject');
     });
 });
 
