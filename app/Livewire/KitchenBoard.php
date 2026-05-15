@@ -48,6 +48,12 @@ class KitchenBoard extends Component
         event(new OrderStatusUpdated($order));
     }
 
+    public function toggleAvailability($menuItemId)
+    {
+        $item = \App\Models\MenuItem::find($menuItemId);
+        $item->update(['available' => !$item->available]);
+    }
+
     public function render()
     {
         $orders = Order::whereDate('created_at', today())
@@ -60,6 +66,8 @@ class KitchenBoard extends Component
         $cooking = $orders->where('status', 'preparing');
         $ready = $orders->where('status', 'ready');
 
-        return view('livewire.kitchen-board', compact('unpaid', 'cooking', 'ready'));
+        $menuItems = \App\Models\MenuItem::orderBy('category')->get();
+
+        return view('livewire.kitchen-board', compact('unpaid', 'cooking', 'ready', 'menuItems'));
     }
 }
